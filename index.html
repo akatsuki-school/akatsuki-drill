@@ -313,7 +313,7 @@ Object.assign(GEN,{
       hints:["OA を底辺と考えると、高さは点 P の y 座標です。",`${M(`${p} × (Pのy座標) ÷ 2 ＝ ${S}`)} から、P の y 座標を求めます。`,`P の y 座標がわかったら、直線の式に代入して x を求めます。`],
       steps:[`OA を底辺にすると、高さは P の y 座標\n${M(`${p} × y ÷ 2 ＝ ${S}`)}　→　${M(`y ＝ ${yP}`)}`,`P は直線上にあるので、y ＝ ${yP} を代入\n${M(`${yP} ＝ ${ax(a)} ${sgn(b)}`)}`,`x について解く\n${M(`${ax(a)} ＝ ${num(yP-b)}`)}　→　${M(`x ＝ ${t}`)}`],
       point:"x 軸上の辺を底辺にすると、高さは点の y 座標",
-      fig:{lines:[{m:a,k:b}],pts:[{x:p,y:0,label:`A(${p}, 0)`,pos:"se"}]},
+      fig:{lines:[{m:a,k:b}],polys:[{pts:[[0,0],[p,0],[t,yP]],tone:"b"}],pts:[{x:p,y:0,label:`A(${p}, 0)`,pos:"se"},{x:t,y:yP,label:"P",pos:a>0?"nw":"ne"}]},
       solFig:{lines:[{m:a,k:b}],polys:[{pts:[[0,0],[p,0],[t,yP]]}],dashes:[[[t,yP],[t,0]]],
         pts:[{x:p,y:0,label:`A(${p}, 0)`,pos:"se"},{x:t,y:yP,label:`P${xy(t,yP)}`,pos:"ne",hot:true}],marks:[{x:t+0.9,y:yP/2,text:`高さ ${yP}`}]}}; },
 });
