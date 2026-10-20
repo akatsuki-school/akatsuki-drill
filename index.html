@@ -71,7 +71,7 @@ input[type=text].name{font:inherit;font-size:1rem;width:100%;box-sizing:border-b
 .mk{font-weight:900;text-align:center;font-size:1.05rem}
 .mk.s-ok{color:var(--good)} .mk.s-up{color:var(--navy)} .mk.s-weak{color:var(--red)} .mk.s-ask{color:var(--amber)} .mk.s-none{color:#c3c8d0}
 .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
-.code{font-family:var(--f-num);font-weight:600;font-size:1.25rem;letter-spacing:.06em;text-align:center;background:var(--ink);color:#fff;border-radius:12px;padding:12px}
+.code{font-family:var(--f-num);font-weight:600;font-size:clamp(.95rem,4.6vw,1.25rem);letter-spacing:.02em;line-height:1.5;text-align:center;background:var(--ink);color:#fff;border-radius:12px;padding:12px}
 .result-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:8px}
 .result-head .t{font-weight:900;font-size:1.15rem}
 .result-head .d{font-family:var(--f-num);font-size:.8rem;color:var(--muted)}
@@ -459,7 +459,7 @@ function endHonban(){
   clearInterval(hbTimer); const hb=S.hb; if(S.phase!=="honban") return;
   for(let i=hb.res.length;i<hb.list.length;i++) hb.res.push({node:hb.list[i],prob:null,correct:false,skipped:true});
   const ok=hb.res.filter(r=>r.correct).length, sec=Math.min(HB_SEC,Math.round((Date.now()-hb.start)/1000));
-  RV.honban.unshift({at:Date.now(),n:hb.list.length,ok,sec}); RV.honban=RV.honban.slice(0,20);
+  RV.honban.unshift({at:Date.now(),n:hb.list.length,ok,sec,res:Object.fromEntries(hb.res.map(r=>[r.node,r.correct?1:0]))}); RV.honban=RV.honban.slice(0,20);
   for(const r of hb.res) if(!r.correct) RV.items[r.node]={...(RV.items[r.node]||{}),box:0,due:addD(1),src:"honban"};
   saveR(); hb.ok=ok; hb.sec=sec; S.phase="honbanResult"; S.cur=null; render(); window.scrollTo(0,0);
 }
@@ -482,6 +482,9 @@ function renderHonbanResult(){
 function renderCodeScreen(){
   setProg("",0);
   const D=load()||fresh(), hb=RV.honban[0], d=new Date();
+  /* 診断していないポイントは、最新の本番モードの○×で埋める */
+  const st={...D.st}; let filled=0;
+  if(hb&&hb.res) for(const [k,v] of Object.entries(hb.res)) if(!st[k]||st[k]==="none"){ st[k]=v?"ok":"weak"; filled++; }
   app.append(h("section",{class:"card pop"},
     h("button",{class:"btn sub",type:"button",style:"justify-self:start",onclick:toMenu},"← 一覧へ"),
     h("div",{class:"result-head"},h("div",{class:"t"},"一次関数 結果コード"),h("div",{class:"d"},`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`)),
@@ -490,8 +493,9 @@ function renderCodeScreen(){
       h("div",{},h("span",{},"復習 連続"),h("b",{},`${streakDays()}日`)),
       h("div",{},h("span",{},"この7日間"),h("b",{},`${week()}問`)),
       h("div",{},h("span",{},"本番モード"),h("b",{},hb?`${hb.ok}/${hb.n}`:"−"))),
-    nodeMap(ORDER,D.st), legend(),
-    h("div",{class:"code"},resultCode(D.st)),
+    nodeMap(ORDER,st), legend(),
+    filled?h("p",{class:"muted"},`診断していない${filled}個のポイントは、本番モード（${mdj(ymd(new Date(hb.at)))}）の結果を入れています。`):null,
+    h("div",{class:"code"},resultCode(st)),
     h("p",{class:"muted"},"この画面をスクショして、塾で先生に見せてください。")));
 }
 
