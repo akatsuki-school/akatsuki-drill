@@ -1,0 +1,760 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>暁塾 演習</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+/* 白い紙に墨色の文字、暁塾のオレンジを一点。スマホ縦持ちで1問ずつ解く画面 */
+:root{
+  --bg:#f4f5f7; --paper:#ffffff; --ink:#14181f; --muted:#6b7280; --line:#e5e7eb; --soft:#f1f3f6;
+  --navy:#2447a6; --navy-soft:#ebf0fb; --good:#1f7a55; --good-soft:#e7f5ee; --red:#d4372c; --red-soft:#fdeceb; --amber:#b7700a; --amber-soft:#fdf3e2;
+  --dawn:#f06a1e;
+  --f-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--f-body);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--paper)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top-in{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{font-weight:900;letter-spacing:.04em}
+.brand i{font-style:normal;color:var(--dawn)}
+.brand{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.brand span{font-weight:700;font-size:.85rem;margin-left:8px}
+.prog{font-family:var(--f-num);font-size:.76rem;color:var(--muted);white-space:nowrap;flex:0 0 auto}
+.bar{height:3px;background:var(--soft)}
+.bar i{display:block;height:100%;background:var(--dawn);width:0;transition:width .3s}
+main{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px 48px;display:grid;gap:14px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:20px;display:grid;gap:14px;min-width:0}
+h1{font-size:1.45rem;font-weight:900;line-height:1.35;margin:0;text-wrap:balance}
+h2{font-size:1.05rem;font-weight:700;margin:0}
+p{margin:0}
+.muted{color:var(--muted);font-size:.88rem}
+.eyebrow{font-size:.74rem;font-weight:700;letter-spacing:.1em;color:var(--dawn)}
+.node{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;color:var(--navy);background:var(--navy-soft);border-radius:999px;padding:3px 10px;justify-self:start}
+.node.back{color:var(--amber);background:var(--amber-soft)}
+.node.chal{color:#fff;background:var(--dawn)}
+.btn.chal{background:var(--dawn);border-color:var(--dawn)}
+.q{font-size:1.06rem;white-space:pre-wrap}
+.q .m{font-family:var(--f-num);font-weight:600;white-space:nowrap}
+.ans{display:flex;flex-wrap:nowrap;align-items:center;gap:6px;max-width:100%;font-family:var(--f-num);font-size:1.15rem;font-weight:600}
+.ans label{display:flex;align-items:center;gap:6px;font-family:var(--f-body);font-size:.9rem;font-weight:500;color:var(--muted)}
+.ans>span{flex:0 0 auto;white-space:nowrap}
+.ans input{font-family:var(--f-num);font-size:1.15rem;font-weight:600;flex:1 1 4em;width:0;min-width:2.2em;max-width:5em;padding:10px 8px;text-align:center;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink)}
+.ans input:focus{outline:none;border-color:var(--dawn)}
+.ans input.bad{border-color:var(--red);background:var(--red-soft)}
+.ans input.ok{border-color:var(--good);background:var(--good-soft)}
+.keys{display:flex;gap:8px;flex-wrap:wrap}
+.keys button{font-family:var(--f-num);font-weight:600;font-size:1rem;min-width:3em;height:2.6em;border:1px solid var(--line);border-radius:10px;background:var(--soft);color:var(--ink);cursor:pointer}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:1rem;border:1px solid var(--ink);border-radius:12px;padding:12px 20px;background:var(--ink);color:#fff;cursor:pointer}
+.btn.wide{width:100%}
+.btn.sub{background:var(--paper);color:var(--ink);border-color:var(--line);font-weight:500;font-size:.92rem;padding:10px 14px}
+.btn.hint{background:var(--amber-soft);border-color:var(--amber-soft);color:var(--amber);font-size:.92rem;padding:10px 14px}
+.btn:disabled{opacity:.4;cursor:default}
+button:focus-visible,input:focus-visible{outline:2px solid var(--dawn);outline-offset:2px}
+.hints{display:grid;gap:8px}
+.hintbox{background:var(--amber-soft);border-radius:12px;padding:12px 14px;font-size:.95rem;white-space:pre-wrap}
+.hintbox b{color:var(--amber);font-size:.78rem;display:block;letter-spacing:.06em}
+.fb{border-radius:12px;padding:12px 14px;font-size:.95rem;white-space:pre-wrap}
+.fb.ok{background:var(--good-soft);color:#14523a}
+.fb.ng{background:var(--red-soft);color:#8c231b}
+.fb.sol{background:var(--soft);color:var(--ink)}
+.fb b{display:block;font-size:1.02rem;margin-bottom:2px}
+input[type=text].name{font:inherit;font-size:1rem;width:100%;box-sizing:border-box;padding:12px;border:1.5px solid var(--line);border-radius:12px}
+.map{display:grid;gap:6px}
+.map .g{font-size:.74rem;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.map .it{display:grid;grid-template-columns:2.2em 1fr;gap:8px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--soft);font-size:.92rem}
+.mk{font-weight:900;text-align:center;font-size:1.05rem}
+.mk.s-ok{color:var(--good)} .mk.s-up{color:var(--navy)} .mk.s-weak{color:var(--red)} .mk.s-ask{color:var(--amber)} .mk.s-none{color:#c3c8d0}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.78rem;color:var(--muted)}
+.code{font-family:var(--f-num);font-weight:600;font-size:1.25rem;letter-spacing:.06em;text-align:center;background:var(--ink);color:#fff;border-radius:12px;padding:12px}
+.result-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.result-head .t{font-weight:900;font-size:1.15rem}
+.result-head .d{font-family:var(--f-num);font-size:.8rem;color:var(--muted)}
+.sol{border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;display:grid;gap:10px}
+.sol-h{font-size:.76rem;font-weight:700;letter-spacing:.1em;color:var(--muted)}
+.sol ol{margin:0;padding:0;list-style:none;counter-reset:st;display:grid;gap:12px}
+.sol li{counter-increment:st;display:grid;grid-template-columns:1.8em 1fr;column-gap:8px}
+.sol li::before{content:counter(st);grid-row:1/span 9;width:1.6em;height:1.6em;border-radius:999px;background:var(--ink);color:#fff;font-family:var(--f-num);font-size:.8rem;font-weight:600;display:grid;place-items:center;margin-top:2px}
+.sol .st-h{font-size:.92rem;color:var(--muted)}
+.sol .st-m{font-family:var(--f-num);font-weight:600;font-size:1.02rem;overflow-x:auto}
+.sol .st-m .m{white-space:nowrap}
+.point{background:var(--navy-soft);color:var(--navy);border-radius:10px;padding:10px 12px;font-size:.95rem;font-weight:700}
+.point b{display:block;font-size:.72rem;letter-spacing:.1em;font-weight:700;opacity:.8}
+.fig{justify-self:center;width:100%;max-width:340px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;line-height:0}
+.fig svg{width:100%;height:auto;display:block}
+button.card.unit{font:inherit;text-align:left;color:var(--ink);cursor:pointer;width:100%}
+button.card.unit:hover{border-color:var(--dawn)}
+button.card.unit.off{opacity:.5;cursor:default}
+.card.today{border:1.5px solid var(--dawn)}
+.streak{font-size:.8rem;font-weight:700;color:var(--dawn);background:#fff1e8;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.flash{border-radius:14px;padding:12px 16px;font-weight:700;font-size:.95rem}
+.flash.ok{background:var(--good-soft);color:#14523a}
+.flash.ng{background:var(--red-soft);color:#8c231b}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stats div{background:var(--soft);border-radius:12px;padding:10px;text-align:center;display:grid;gap:2px}
+.stats span{font-size:.74rem;color:var(--muted);font-weight:700}
+.stats b{font-family:var(--f-num);font-size:1.25rem}
+.hbrow{display:grid;grid-template-columns:2em 1fr;gap:8px;align-items:start;padding:8px 10px;border-radius:10px;background:var(--soft);font-size:.92rem}
+.hbrow details{grid-column:2}
+.hbrow summary{cursor:pointer;color:var(--navy);font-weight:700;font-size:.86rem}
+.hbrow .q{font-size:.95rem;margin:6px 0}
+.codein{display:flex;gap:8px}
+.codein .btn{flex:0 0 auto;white-space:nowrap}
+.codein input{flex:1 1 auto;min-width:0;font-family:var(--f-num);letter-spacing:.08em;text-transform:uppercase}
+.pop{animation:pop .25s ease}
+@keyframes pop{from{transform:scale(.97);opacity:.6}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.pop{animation:none}.bar i{transition:none}}
+</style>
+</head><body>
+
+<div class="top"><div class="top-in"><div class="brand">暁塾<i>.</i><span id="brandSub">演習</span></div><div class="prog" id="prog"></div></div><div class="bar"><i id="barFill"></i></div></div>
+<main id="app"></main>
+
+<script>
+/* ===== 分数 ===== */
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+function Fr(n,d=1){ if(d<0){n=-n;d=-d;} const g=gcd(n,d); return {n:n/g,d:d/g}; }
+const feq=(a,b)=>a&&b&&a.n===b.n&&a.d===b.d;
+function parseAns(s){
+  s=String(s||"").trim().replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/[−ー－‐]/g,"-").replace(/[／]/g,"/").replace(/[．]/g,".").replace(/\s+/g,"").replace(/^\+/,"");
+  if(!s) return null;
+  let m=s.match(/^(-?)(\d+)\/(\d+)$/); if(m){ if(+m[3]===0) return null; return Fr((m[1]?-1:1)*+m[2],+m[3]); }
+  m=s.match(/^(-?)\((-?\d+)\)\/(\d+)$/); if(m) return null;
+  m=s.match(/^-?\d+(\.\d+)?$/); if(m){ const parts=s.split("."); if(parts.length===1) return Fr(+s,1); const dec=parts[1].length; return Fr(Math.round(+s*10**dec),10**dec); }
+  return null;
+}
+const fs=f=>f.d===1?num(f.n):`${f.n<0?"−":""}${Math.abs(f.n)}/${f.d}`;
+const num=n=>n<0?`−${-n}`:`${n}`;
+const par=n=>n<0?`(${num(n)})`:`${n}`;
+const R=(lo,hi)=>lo+Math.floor(Math.random()*(hi-lo+1));
+const NZ=(lo,hi)=>{let v;do v=R(lo,hi);while(v===0);return v;};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function line(a,b){ const ax=a===1?"x":a===-1?"−x":`${num(a)}x`; return `y = ${ax}${b>0?` + ${b}`:b<0?` − ${-b}`:""}`; }
+const M=s=>`⟦${s}⟧`; /* 数式を等幅で表示する印 */
+
+/* ===== つまずきポイント（前の単元 → 一次関数） ===== */
+const NODES={
+  P1:{name:"正負の数の計算",grp:"前に習った内容"},
+  P2:{name:"文字の式に数を代入する",grp:"前に習った内容"},
+  P3:{name:"一次方程式を解く",grp:"前に習った内容"},
+  P4:{name:"比例の式 y＝ax",grp:"前に習った内容"},
+  P5:{name:"連立方程式を解く",grp:"前に習った内容"},
+  N1:{name:"x の値から y を求める",grp:"一次関数"},
+  N2:{name:"変化の割合（傾き）を求める",grp:"一次関数"},
+  N3:{name:"式から傾きと切片を読む",grp:"一次関数"},
+  N4:{name:"y の増加量を求める",grp:"一次関数"},
+  N5:{name:"傾きと1点から式を求める",grp:"一次関数"},
+  N6:{name:"2点から式を求める（連立方程式）",grp:"一次関数"},
+  N7:{name:"2直線の交点を求める",grp:"一次関数"},
+  N8:{name:"文章題を式にする",grp:"一次関数"},
+};
+/* これができないと、これもできない（さかのぼり先） */
+const PRE={N1:["P2"],N2:["P1"],N3:["P4"],N4:["N2"],N5:["N1","P3"],N6:["P2","P5"],N7:["P5"],N8:["N5"]};
+const MAIN=["N1","N2","N3","N4","N5","N6","N7","N8"];
+const ORDER=["P1","P2","P3","P4","P5",...MAIN];
+
+/* ===== 問題をつくる（数は毎回変わる。答えはここで計算） =====
+   fields: 入力欄、mis: よくある間違いと一言、hints: 3段階、
+   steps: 解き方（1行ずつ）、point: いちばん大事なこと */
+const sgn=n=>n>=0?`＋ ${n}`:`− ${-n}`;          /* 「＋ 3」「− 3」 */
+const ax=(a,v="x")=>a===0?"0":a===1?v:a===-1?`−${v}`:`${num(a)}${v}`;
+const GEN={
+  P1(){ if(Math.random()<.5){ const a=NZ(-9,9), b=R(1,9); const ans=a+b;
+      return {q:`次の計算をしなさい。\n${M(`${num(a)} − (−${b})`)}`, fields:[{ans:Fr(ans)}],
+        mis:[{v:[Fr(a-b)],t:"「−(−)」は＋になるよ。ひく数の符号を変えてたし算にしよう。"}],
+        hints:["マイナスの数をひくときは、符号を変えてたし算にします。",`${M(`${num(a)} − (−${b}) ＝ ${num(a)} ＋ ${b}`)}`,`${M(`${num(a)} ＋ ${b}`)} を計算すると…`],
+        steps:[`ひく数の符号を変えて、たし算に直す\n${M(`${num(a)} − (−${b}) ＝ ${num(a)} ＋ ${b}`)}`,`計算する\n${M(`${num(a)} ＋ ${b} ＝ ${num(ans)}`)}`],
+        point:"「−(−○)」は「＋○」"}; }
+    const a=NZ(-9,9), b=NZ(-9,9), neg=(a<0)+(b<0);
+    return {q:`次の計算をしなさい。\n${M(`${par(a)} × ${par(b)}`)}`, fields:[{ans:Fr(a*b)}],
+      mis:[{v:[Fr(-a*b)],t:"符号に注意。負の数が2個なら＋、1個なら−になるよ。"}],
+      hints:["まず答えの符号を決めます。負の数が偶数個なら＋、奇数個なら−。",`負の数は${neg}個なので、符号は ${neg%2?"−":"＋"}。`,`${M(`${Math.abs(a)} × ${Math.abs(b)} ＝ ${Math.abs(a*b)}`)}`],
+      steps:[`符号を決める\n負の数が${neg}個 → ${neg%2?"−":"＋"}`,`数だけかける\n${M(`${Math.abs(a)} × ${Math.abs(b)} ＝ ${Math.abs(a*b)}`)}`,`符号をつけて\n${M(`${num(a*b)}`)}`],
+      point:"負の数が偶数個なら＋、奇数個なら−"}; },
+  P2(){ const a=NZ(-5,5), b=NZ(-8,8), x=NZ(-5,-1); const ans=a*x+b;
+    return {q:`x ＝ ${num(x)} のとき、次の式の値を求めなさい。\n${M(`${ax(a)} ${sgn(b)}`)}`, fields:[{ans:Fr(ans)}],
+      mis:[{v:[Fr(a*(-x)+b)],t:"負の数を代入するときは、かっこをつけよう。"},{v:[Fr(a*x-b)],t:"後ろの数の符号を確かめよう。"}],
+      hints:["x に数を入れかえます。負の数はかっこをつけて入れます。",`${M(`${num(a)} × ${par(x)} ${sgn(b)}`)}`,`${M(`${num(a)} × ${par(x)} ＝ ${num(a*x)}`)} です。`],
+      steps:[`x に ${par(x)} を入れる（かっこをつける）\n${M(`${num(a)} × ${par(x)} ${sgn(b)}`)}`,`かけ算を先に\n${M(`${num(a)} × ${par(x)} ＝ ${num(a*x)}`)}`,`残りを計算\n${M(`${num(a*x)} ${sgn(b)} ＝ ${num(ans)}`)}`],
+      point:"負の数を代入するときは、必ずかっこをつける"}; },
+  P3(){ const a=NZ(-6,6), x=NZ(-8,8), b=NZ(-9,9); const c=a*x+b;
+    return {q:`次の方程式を解きなさい。\n${M(`${ax(a)} ${sgn(b)} ＝ ${num(c)}`)}`, fields:[{pre:"x ＝",ans:Fr(x)}],
+      mis:[...((c+b)%a===0?[{v:[Fr((c+b)/a)],t:"移項すると符号が変わるよ。"}]:[]),{v:[Fr(-x)],t:"両辺を x の係数でわるとき、符号に注意。"}],
+      hints:[`数の項（${sgn(b)}）を右辺に移項します。移項すると符号が変わります。`,`${M(`${ax(a)} ＝ ${num(c)} ${sgn(-b)}`)}`,`右辺を計算して、両辺を ${par(a)} でわります。`],
+      steps:[`${sgn(b)} を右辺に移項（符号が変わる）\n${M(`${ax(a)} ＝ ${num(c)} ${sgn(-b)}`)}`,`右辺を計算\n${M(`${ax(a)} ＝ ${num(c-b)}`)}`,`両辺を ${par(a)} でわる\n${M(`x ＝ ${num(x)}`)}`],
+      point:"移項すると符号が変わる"}; },
+  P4(){ const a=NZ(-6,6), x=NZ(-4,4), y=a*x;
+    return {q:`y は x に比例し、x ＝ ${num(x)} のとき y ＝ ${num(y)} です。比例定数を求めなさい。`, fields:[{ans:Fr(a)}],
+      mis:[{v:[Fr(x,y)],t:"y ＝ ax なので、a ＝ y ÷ x。わる順番が逆になっていないかな？"},{v:[Fr(-a)],t:"符号をもう一度確かめよう。"}],
+      hints:["比例の式は y ＝ ax。a が比例定数です。",`y ＝ ax に x ＝ ${num(x)}、y ＝ ${num(y)} を入れます。`,`${M(`${num(y)} ＝ a × ${par(x)}`)} なので、a ＝ ${num(y)} ÷ ${par(x)}`],
+      steps:[`比例の式 y ＝ ax に代入\n${M(`${num(y)} ＝ a × ${par(x)}`)}`,`a について解く\n${M(`a ＝ ${num(y)} ÷ ${par(x)} ＝ ${num(a)}`)}`],
+      point:"比例定数 a ＝ y ÷ x"}; },
+  P5(){ const x=NZ(-5,5), y=NZ(-6,6); let c1,c2; do{c1=NZ(-4,5);c2=NZ(-4,5);}while(c1===c2); const r1=c1*x+y, r2=c2*x+y;
+    return {q:`次の連立方程式を解きなさい。\n${M(`${ax(c1)} ＋ y ＝ ${num(r1)}`)}　…①\n${M(`${ax(c2)} ＋ y ＝ ${num(r2)}`)}　…②`, fields:[{pre:"x ＝",ans:Fr(x),post:"、"},{pre:"y ＝",ans:Fr(y)}],
+      mis:[{v:[Fr(-x),null],t:"①−② をするとき、右辺も同じ順番でひこう。"},{v:[Fr(y),Fr(x)],t:"x と y が逆になっていないかな？"}],
+      hints:["どちらの式も「＋ y」なので、①から②をひくと y が消えます。",`①−②：${M(`${num(c1-c2)}x ＝ ${num(r1)} − ${par(r2)}`)}`,`x を求めたら、①に入れて y を求めます。`],
+      steps:[`①−② で y を消す\n${M(`(${num(c1)} − ${par(c2)})x ＝ ${num(r1)} − ${par(r2)}`)}\n${M(`${ax(c1-c2)} ＝ ${num(r1-r2)}`)}`,`x を求める\n${M(`x ＝ ${num(x)}`)}`,`x を①に代入\n${M(`${num(c1)} × ${par(x)} ＋ y ＝ ${num(r1)}`)}\n${M(`y ＝ ${num(r1)} − ${par(c1*x)} ＝ ${num(y)}`)}`],
+      point:"係数が同じ文字は、式どうしをひけば消える"}; },
+  N1(){ const a=NZ(-5,5), b=NZ(-8,8), x=NZ(-4,4); const ans=a*x+b;
+    return {q:`一次関数 ${M(line(a,b))} で、x ＝ ${num(x)} のときの y の値を求めなさい。`, fields:[{pre:"y ＝",ans:Fr(ans)}],
+      mis:[{v:[Fr(-a*x+b)],t:"負の数を代入するときは、かっこをつけよう。"},{v:[Fr(a*x-b)],t:"切片の符号を確かめよう。"},{v:[Fr(a+x+b)],t:"ax は a × x のことだよ。"}],
+      hints:["式の x に数を入れかえます（代入）。",`${M(`y ＝ ${num(a)} × ${par(x)} ${sgn(b)}`)}`,`${M(`${num(a)} × ${par(x)} ＝ ${num(a*x)}`)}`],
+      steps:[`x に ${par(x)} を代入\n${M(`y ＝ ${num(a)} × ${par(x)} ${sgn(b)}`)}`,`かけ算を先に\n${M(`y ＝ ${num(a*x)} ${sgn(b)}`)}`,`計算する\n${M(`y ＝ ${num(ans)}`)}`],
+      point:"代入するとき、負の数にはかっこ"}; },
+  N2(){ const a=NZ(-4,4), b=NZ(-6,6); const x1=R(-4,2), x2=x1+R(1,4); const y1=a*x1+b, y2=a*x2+b;
+    return {q:`2点 ${M(`(${num(x1)}, ${num(y1)})`)} と ${M(`(${num(x2)}, ${num(y2)})`)} を通る直線の変化の割合（傾き）を求めなさい。`, fields:[{ans:Fr(a)}],
+      mis:[{v:[Fr(x2-x1,y2-y1)],t:"変化の割合は (yの増加量) ÷ (xの増加量)。分母と分子が逆になっていないかな？"},{v:[Fr(-a)],t:"ひき算の順番をそろえよう。yもxも「あと − まえ」で。"}],
+      hints:["変化の割合 ＝ (yの増加量) ÷ (xの増加量)",`xの増加量：${M(`${num(x2)} − ${par(x1)} ＝ ${x2-x1}`)}`,`yの増加量：${M(`${num(y2)} − ${par(y1)} ＝ ${num(y2-y1)}`)}`],
+      steps:[`x の増加量（あと − まえ）\n${M(`${num(x2)} − ${par(x1)} ＝ ${x2-x1}`)}`,`y の増加量（同じ順番で）\n${M(`${num(y2)} − ${par(y1)} ＝ ${num(y2-y1)}`)}`,`y の増加量 ÷ x の増加量\n${M(`${num(y2-y1)} ÷ ${x2-x1} ＝ ${num(a)}`)}`],
+      point:"変化の割合 ＝ yの増加量 ÷ xの増加量（yが上、xが下）"}; },
+  N3(){ const a=NZ(-6,6), b=NZ(-9,9);
+    return {q:`一次関数 ${M(line(a,b))} のグラフの傾きと切片を答えなさい。`, fields:[{pre:"傾き",ans:Fr(a)},{pre:"切片",ans:Fr(b)}],
+      mis:[{v:[Fr(b),Fr(a)],t:"y ＝ ax ＋ b の a が傾き、b が切片だよ。逆になっていないかな？"},{v:[Fr(a),Fr(-b)],t:"切片の符号を確かめよう。「− 3」なら切片は −3。"}],
+      hints:["y ＝ ax ＋ b の形と見くらべます。","x の前の数が傾き a、うしろの数が切片 b。","「− ○」と書いてあれば、その数はマイナスです。"],
+      steps:[`y ＝ ax ＋ b と見くらべる\n${M(line(a,b))}`,`x の前の数 → 傾き\n${M(`a ＝ ${num(a)}`)}`,`うしろの数 → 切片（符号ごと）\n${M(`b ＝ ${num(b)}`)}`],
+      point:"y ＝ ax ＋ b の a が傾き、b が切片"}; },
+  N4(){ const a=NZ(-5,5), b=NZ(-6,6), p=R(-3,2), q=p+R(2,5);
+    return {q:`一次関数 ${M(line(a,b))} で、x の値が ${num(p)} から ${num(q)} まで増加するとき、y の増加量を求めなさい。`, fields:[{ans:Fr(a*(q-p))}],
+      mis:[{v:[Fr(a)],t:"それは変化の割合だよ。xの増加量をかけよう。"},{v:[Fr(q-p)],t:"それはxの増加量。変化の割合をかけよう。"}],
+      hints:["yの増加量 ＝ 変化の割合 × xの増加量",`xの増加量：${M(`${num(q)} − ${par(p)} ＝ ${q-p}`)}`,`変化の割合は傾きと同じ ${num(a)}。`],
+      steps:[`x の増加量\n${M(`${num(q)} − ${par(p)} ＝ ${q-p}`)}`,`変化の割合は傾きと同じ\n${M(`${num(a)}`)}`,`かける\n${M(`${num(a)} × ${q-p} ＝ ${num(a*(q-p))}`)}`],
+      point:"yの増加量 ＝ 変化の割合 × xの増加量"}; },
+  N5(){ const a=NZ(-4,4), x1=NZ(-4,4), b=NZ(-7,7); const y1=a*x1+b;
+    return {q:`傾きが ${num(a)} で、点 ${M(`(${num(x1)}, ${num(y1)})`)} を通る直線の式を求めなさい。`, fields:[{pre:"y ＝",ans:Fr(a),post:"x ＋"},{ans:Fr(b)}], line:true,
+      mis:[{v:[Fr(a),Fr(y1+a*x1)],t:"b を求めるとき、移項の符号に注意しよう。"},{v:[Fr(b),Fr(a)],t:"傾きと切片の場所が逆になっていないかな？"}],
+      hints:[`傾きがわかっているので ${M(`y ＝ ${ax(a)} ＋ b`)} とおきます。`,`点の座標を代入：${M(`${num(y1)} ＝ ${num(a)} × ${par(x1)} ＋ b`)}`,`${M(`${num(y1)} ＝ ${num(a*x1)} ＋ b`)} を b について解きます。`],
+      steps:[`傾きが ${num(a)} なので\n${M(`y ＝ ${ax(a)} ＋ b`)}`,`点 (${num(x1)}, ${num(y1)}) を代入\n${M(`${num(y1)} ＝ ${num(a)} × ${par(x1)} ＋ b`)}\n${M(`${num(y1)} ＝ ${num(a*x1)} ＋ b`)}`,`b について解く（移項で符号が変わる）\n${M(`b ＝ ${num(y1)} − ${par(a*x1)} ＝ ${num(b)}`)}`,`答え\n${M(line(a,b))}`],
+      point:"傾きがわかれば、点を代入して切片 b を求めるだけ"}; },
+  N6(){ const a=NZ(-4,4), b=NZ(-7,7); let x1,x2; do{ x1=R(-4,2); x2=x1+R(1,4); }while(x1===0||x2===0); const y1=a*x1+b, y2=a*x2+b;
+    return {q:`2点 ${M(`(${num(x1)}, ${num(y1)})`)}、${M(`(${num(x2)}, ${num(y2)})`)} を通る直線の式を求めなさい。`, fields:[{pre:"y ＝",ans:Fr(a),post:"x ＋"},{ans:Fr(b)}], line:true,
+      mis:[{v:[Fr(-a),null],t:"②−① をするとき、左辺も右辺も同じ順番でひこう。"},{v:[Fr(a),Fr(y1+a*x1)],t:"b を求めるとき、移項の符号に注意しよう。"},{v:[Fr(b),Fr(a)],t:"a が傾き（x の前）、b が切片だよ。"}],
+      hints:["y ＝ ax ＋ b に2点の座標をそれぞれ代入して、a と b の連立方程式をつくります。",`①：${M(`${num(y1)} ＝ ${ax(x1,"a")} ＋ b`)}\n②：${M(`${num(y2)} ＝ ${ax(x2,"a")} ＋ b`)}`,`②−① をすると b が消えて、${M(`${num(y2-y1)} ＝ ${ax(x2-x1,"a")}`)}`],
+      steps:[`y ＝ ax ＋ b に1つ目の点を代入\n${M(`${num(y1)} ＝ ${ax(x1,"a")} ＋ b`)}　…①`,`2つ目の点を代入\n${M(`${num(y2)} ＝ ${ax(x2,"a")} ＋ b`)}　…②`,`②−① で b を消す\n${M(`${num(y2)} − ${par(y1)} ＝ (${num(x2)} − ${par(x1)})a`)}\n${M(`${num(y2-y1)} ＝ ${ax(x2-x1,"a")}`)}　→　${M(`a ＝ ${num(a)}`)}`,`a ＝ ${num(a)} を①に代入\n${M(`${num(y1)} ＝ ${num(x1*a)} ＋ b`)}　→　${M(`b ＝ ${num(b)}`)}`,`答え\n${M(line(a,b))}`],
+      point:"2点の座標を y ＝ ax ＋ b に入れて、a と b の連立方程式を解く",
+      solFig:{lines:[{m:a,k:b}],pts:[{x:x1,y:y1,label:xy(x1,y1),pos:"nw"},{x:x2,y:y2,label:xy(x2,y2),pos:"se"},{x:0,y:b,label:`切片 ${num(b)}`,pos:"ne",hot:true}]}}; },
+  N7(){ const x=NZ(-4,4), y=NZ(-6,6); let a1,a2; do{a1=NZ(-3,3);a2=NZ(-3,3);}while(a1===a2); const b1=y-a1*x, b2=y-a2*x;
+    const r1=line(a1,b1).slice(4), r2=line(a2,b2).slice(4);
+    return {q:`2直線 ① ${M(line(a1,b1))} と ② ${M(line(a2,b2))} の交点の座標を求めなさい。`, fields:[{pre:"(",ans:Fr(x),post:","},{ans:Fr(y),post:")"}],
+      mis:[{v:[Fr(-x),null],t:"x を求めるときの移項の符号を確かめよう。"},{v:[Fr(y),Fr(x)],t:"(x, y) の順で答えよう。"}],
+      hints:["交点では、2つの式の y が同じ値です。右辺どうしを ＝ で結びます。",`${M(`${r1} ＝ ${r2}`)}`,`x の項を左、数を右に集めると ${M(`${ax(a1-a2)} ＝ ${num(b2-b1)}`)}`],
+      steps:[`y が同じなので、右辺どうしを ＝ で結ぶ\n${M(`${r1} ＝ ${r2}`)}`,`x を左、数を右に集める\n${M(`${ax(a1-a2)} ＝ ${num(b2-b1)}`)}　→　${M(`x ＝ ${num(x)}`)}`,`x を1つ目の式に代入\n${M(`y ＝ ${num(a1)} × ${par(x)} ${sgn(b1)} ＝ ${num(y)}`)}`,`答え\n${M(`(${num(x)}, ${num(y)})`)}`],
+      point:"交点の座標 ＝ 2つの式を連立方程式として解いた答え",
+      solFig:{lines:[{m:a1,k:b1,label:"①"},{m:a2,k:b2,label:"②"}],pts:[{x:x,y:y,label:`交点${xy(x,y)}`,pos:"ne",hot:true}]}}; },
+  N8(){ if(Math.random()<.5){ const L0=pick([8,10,12,15,20]), r=pick([2,3,4,5]);
+      return {q:`水そうに ${L0}L の水が入っています。ここに毎分 ${r}L ずつ水を入れます。x 分後の水の量を yL とするとき、y を x の式で表しなさい。`, fields:[{pre:"y ＝",ans:Fr(r),post:"x ＋"},{ans:Fr(L0)}], line:true,
+        mis:[{v:[Fr(L0),Fr(r)],t:"1分ごとに増える量が x の係数、はじめの量が切片だよ。"}],
+        hints:["「はじめの量」と「1分あたりに変わる量」を見つけます。",`1分で ${r}L 増えるので、x 分で ${r}x L 増えます。`,`はじめの ${L0}L に足します。`],
+        steps:[`はじめの量 → 切片\n${M(`${L0}`)}`,`1分あたり増える量 → 傾き\n${M(`${r}`)}　（x 分で ${r}x L 増える）`,`答え\n${M(`y ＝ ${r}x ＋ ${L0}`)}`],
+        point:"「はじめの量」が切片、「1分あたりの変化」が傾き"}; }
+    const L0=pick([12,15,18,20,24,30]), r=pick([2,3]);
+    return {q:`長さ ${L0}cm の線香に火をつけると、毎分 ${r}cm ずつ短くなります。火をつけてから x 分後の線香の長さを ycm とするとき、y を x の式で表しなさい。`, fields:[{pre:"y ＝",ans:Fr(-r),post:"x ＋"},{ans:Fr(L0)}], line:true,
+      mis:[{v:[Fr(r),Fr(L0)],t:"短くなるときは、x の係数がマイナスになるよ。"},{v:[Fr(L0),Fr(-r)],t:"1分ごとに変わる量が x の係数、はじめの長さが切片だよ。"}],
+      hints:["「はじめの長さ」と「1分あたりに変わる量」を見つけます。",`1分で ${r}cm 短くなるので、x 分で ${r}x cm 短くなります。`,`はじめの ${L0}cm からひきます。`],
+      steps:[`はじめの長さ → 切片\n${M(`${L0}`)}`,`1分あたり ${r}cm 短くなる → 傾きはマイナス\n${M(`−${r}`)}`,`答え\n${M(`y ＝ −${r}x ＋ ${L0}`)}`],
+      point:"減っていくときは、傾きがマイナス"}; },
+};
+
+/* ===== チャレンジ（偏差値65〜73） ===== */
+const fa=f=>f.d===1?num(f.n):`${f.n<0?"−":""}${Math.abs(f.n)}/${f.d}`;   /* 分数の表示 */
+const fadd=(a,b)=>Fr(a.n*b.d+b.n*a.d,a.d*b.d), fsub=(a,b)=>fadd(a,Fr(-b.n,b.d)), fmul=(a,b)=>Fr(a.n*b.n,a.d*b.d), fdiv=(a,b)=>Fr(a.n*b.d,a.d*b.n);
+const fabs=f=>Fr(Math.abs(f.n),f.d);
+function lineF(m,n){ /* 分数の傾き・切片で y ＝ ○x ＋ ○ */
+  const mx=m.n===0?"":(m.d===1?(m.n===1?"x":m.n===-1?"−x":`${num(m.n)}x`):`${m.n<0?"−":""}(${Math.abs(m.n)}/${m.d})x`);
+  const nb=n.n===0?"":(n.n>0?` ＋ ${fa(n)}`:` − ${fa(fabs(n))}`);
+  return `y ＝ ${mx||"0"}${mx?nb:(n.n===0?"":fa(n))}`;
+}
+Object.assign(NODES,{
+  A1:{name:"直線と座標軸でできる三角形の面積",grp:"発展（偏差値65〜70）"},
+  A2:{name:"2直線と y 軸でできる三角形の面積",grp:"発展（偏差値65〜70）"},
+  A3:{name:"三角形の面積を2等分する直線",grp:"難関（偏差値70〜73）"},
+  A4:{name:"直線上を動く点と三角形の面積",grp:"難関（偏差値70〜73）"},
+});
+Object.assign(PRE,{A1:["N3","P3"],A2:["N7"],A3:["N6"],A4:["N1","P3"]});
+const CHAL=["A1","A2","A3","A4"];
+Object.assign(GEN,{
+  A1(){ let a,xi; do{ a=NZ(-4,4); xi=NZ(-6,6); }while(Math.abs(a*xi)>12); const b=-a*xi; const S=Fr(Math.abs(b)*Math.abs(xi),2);
+    return {q:`直線 ${M(line(a,b))} と x 軸、y 軸で囲まれた三角形の面積を求めなさい。`, fields:[{ans:S}],
+      mis:[{v:[Fr(Math.abs(b)*Math.abs(xi))],t:"三角形の面積は 底辺 × 高さ ÷ 2。÷2 を忘れていないかな？"}],
+      hints:["三角形の頂点は、原点と、直線が x 軸・y 軸と交わる2点です。",`y 軸との交点は切片：${M(`(0, ${num(b)})`)}`,`x 軸との交点は y ＝ 0 を代入：${M(`0 ＝ ${ax(a)} ${sgn(b)}`)}`],
+      steps:[`y 軸との交点（切片）\n${M(`(0, ${num(b)})`)}　→ 高さ ${Math.abs(b)}`,`x 軸との交点は y ＝ 0 を代入\n${M(`0 ＝ ${ax(a)} ${sgn(b)}`)}　→　${M(`x ＝ ${num(xi)}`)}　→ 底辺 ${Math.abs(xi)}`,`面積 ＝ 底辺 × 高さ ÷ 2\n${M(`${Math.abs(xi)} × ${Math.abs(b)} ÷ 2 ＝ ${fa(S)}`)}`],
+      point:"座標軸との交点：y 軸は切片、x 軸は y ＝ 0 を代入",
+      fig:{lines:[{m:a,k:b}],polys:[{pts:[[0,0],[xi,0],[0,b]]}],pts:[]},
+      solFig:{lines:[{m:a,k:b}],polys:[{pts:[[0,0],[xi,0],[0,b]]}],pts:[{x:0,y:b,label:xy(0,b),pos:xi>0?"nw":"ne"},{x:xi,y:0,label:xy(xi,0),pos:b>0?"se":"ne"}],marks:[{x:xi/2,y:b>0?-0.9:0.5,text:`底辺 ${Math.abs(xi)}`},{x:xi>0?-1.6:1.6,y:b/2,text:`高さ ${Math.abs(b)}`}]}}; },
+  A2(){ let x0,y0,a1,a2; do{ x0=NZ(-5,5); y0=NZ(-6,6); a1=NZ(-3,3); a2=NZ(-3,3); }while(a1===a2); const b1=y0-a1*x0, b2=y0-a2*x0; const S=Fr(Math.abs(b1-b2)*Math.abs(x0),2);
+    return {q:`2直線 ① ${M(line(a1,b1))} と ② ${M(line(a2,b2))} と y 軸で囲まれた三角形の面積を求めなさい。`, fields:[{ans:S}],
+      mis:[{v:[Fr(Math.abs(b1-b2)*Math.abs(x0))],t:"÷2 を忘れていないかな？"},{v:[Fr(Math.abs(b1-b2)*Math.abs(y0),2)],t:"高さは交点の y 座標ではなく、y 軸からの距離（x 座標）だよ。"}],
+      hints:["y 軸を底辺と考えます。底辺は2つの切片の間の長さです。",`底辺：${M(`${num(b1)} と ${num(b2)} の差 ＝ ${Math.abs(b1-b2)}`)}`,`高さは、2直線の交点から y 軸までの距離（交点の x 座標の大きさ）。交点は連立方程式で求めます。`],
+      steps:[`y 軸上の底辺（切片の差）\n${M(`|${num(b1)} − ${par(b2)}| ＝ ${Math.abs(b1-b2)}`)}`,`2直線の交点（右辺どうしを ＝ で結ぶ）\n${M(`${line(a1,b1).slice(4)} ＝ ${line(a2,b2).slice(4)}`)}　→　${M(`x ＝ ${num(x0)}`)}`,`高さは交点から y 軸までの距離\n${M(`${Math.abs(x0)}`)}`,`面積\n${M(`${Math.abs(b1-b2)} × ${Math.abs(x0)} ÷ 2 ＝ ${fa(S)}`)}`],
+      point:"y 軸を底辺にすると、高さは交点の x 座標の大きさ",
+      fig:{lines:[{m:a1,k:b1,label:"①"},{m:a2,k:b2,label:"②"}],polys:[{pts:[[0,b1],[0,b2],[x0,y0]]}],pts:[]},
+      solFig:{lines:[{m:a1,k:b1,label:"①"},{m:a2,k:b2,label:"②"}],polys:[{pts:[[0,b1],[0,b2],[x0,y0]]}],dashes:[[[x0,y0],[0,y0]]],
+        pts:[{x:0,y:b1,label:xy(0,b1),pos:x0>0?"nw":"ne"},{x:0,y:b2,label:xy(0,b2),pos:x0>0?"nw":"ne"},{x:x0,y:y0,label:`交点${xy(x0,y0)}`,pos:x0>0?"ne":"nw",hot:true}],
+        marks:[{x:x0/2,y:y0-1.1,text:`高さ ${Math.abs(x0)}`}]}}; },
+  A3(){ let A,B,C; do{ A=[R(-3,3),R(2,7)]; B=[R(-6,-1),R(-5,0)]; C=[R(1,7),R(-5,1)]; }while((B[0]+C[0])%2||(B[1]+C[1])%2||(B[0]+C[0])/2===A[0]||(B[0]-A[0])*(C[1]-A[1])===(C[0]-A[0])*(B[1]-A[1])||Fr((B[1]+C[1])/2-A[1],(B[0]+C[0])/2-A[0]).d>3);
+    const Mx=(B[0]+C[0])/2, My=(B[1]+C[1])/2; const m=Fr(My-A[1],Mx-A[0]); const n=fsub(Fr(A[1]),fmul(m,Fr(A[0])));
+    const G=[Fr(A[0]+B[0]+C[0],3),Fr(A[1]+B[1]+C[1],3)];
+    return {q:`3点 ${M(`A(${num(A[0])}, ${num(A[1])})`)}、${M(`B(${num(B[0])}, ${num(B[1])})`)}、${M(`C(${num(C[0])}, ${num(C[1])})`)} を頂点とする△ABC があります。点 A を通り、△ABC の面積を2等分する直線の式を求めなさい。`,
+      fields:[{pre:"y ＝",ans:m,post:"x ＋"},{ans:n}], line:true,
+      mis:[{v:[fdiv(fsub(G[1],Fr(A[1])),fsub(G[0],Fr(A[0]))),null],t:"重心ではなく、辺 BC の中点を通るよ。"}],
+      hints:["頂点 A を通って面積を2等分する直線は、向かいの辺 BC の中点を通ります（底辺が半分ずつ、高さが同じだから）。",`BC の中点：${M(`((${num(B[0])} ＋ ${par(C[0])}) ÷ 2, (${num(B[1])} ＋ ${par(C[1])}) ÷ 2) ＝ (${num(Mx)}, ${num(My)})`)}`,`A と中点の2点を通る直線の式を、連立方程式で求めます。`],
+      steps:[`面積を2等分する直線は、BC の中点 M を通る（△ABM と △ACM は、底辺が等しく高さも同じ）`,`中点 M\n${M(`M(${num(Mx)}, ${num(My)})`)}`,`y ＝ ax ＋ b に A と M を代入\n${M(`${num(A[1])} ＝ ${ax(A[0],"a")} ＋ b`)}　…①\n${M(`${num(My)} ＝ ${ax(Mx,"a")} ＋ b`)}　…②`,`①−② で b を消す\n${M(`${num(A[1]-My)} ＝ ${ax(A[0]-Mx,"a")}`)}　→　${M(`a ＝ ${fa(m)}`)}`,`①に代入して\n${M(`b ＝ ${fa(n)}`)}`,`答え\n${M(lineF(m,n))}`],
+      point:"頂点を通って面積を2等分する直線 → 向かいの辺の中点を通る",
+      fig:{polys:[{pts:[A,B,C],tone:"b"}],pts:[{x:A[0],y:A[1],label:"A",pos:"n"},{x:B[0],y:B[1],label:"B",pos:"sw"},{x:C[0],y:C[1],label:"C",pos:"se"}]},
+      solFig:{lines:[{m:m.n/m.d,k:n.n/n.d,color:"#f06a1e"}],polys:[{pts:[A,B,[Mx,My]],tone:"b"},{pts:[A,C,[Mx,My]],tone:"c"}],
+        pts:[{x:A[0],y:A[1],label:"A",pos:"n"},{x:B[0],y:B[1],label:"B",pos:"sw"},{x:C[0],y:C[1],label:"C",pos:"se"},{x:Mx,y:My,label:`M${xy(Mx,My)}`,pos:"s",hot:true}]}}; },
+  A4(){ let p,a,b,t,yP; do{ p=pick([2,4,6]); a=NZ(-3,3); b=NZ(-6,6); t=R(1,6); yP=a*t+b; }while(yP<=0); const S=p*yP/2;
+    return {q:`原点を O、点 A(${p}, 0) とします。直線 ${M(line(a,b))} 上の点 P は x 軸より上にあり、x 座標は正です。△OAP の面積が ${S} になるとき、点 P の x 座標を求めなさい。`, fields:[{pre:"x ＝",ans:Fr(t)}],
+      mis:[...((S/p-b)%a===0&&(S/p-b)/a!==t?[{v:[Fr((S/p-b)/a)]},]:[]).map(m=>({...m,t:"面積 ＝ 底辺 × 高さ ÷ 2。÷2 を戻すとき、2倍するのを忘れていないかな？"}))],
+      hints:["OA を底辺と考えると、高さは点 P の y 座標です。",`${M(`${p} × (Pのy座標) ÷ 2 ＝ ${S}`)} から、P の y 座標を求めます。`,`P の y 座標がわかったら、直線の式に代入して x を求めます。`],
+      steps:[`OA を底辺にすると、高さは P の y 座標\n${M(`${p} × y ÷ 2 ＝ ${S}`)}　→　${M(`y ＝ ${yP}`)}`,`P は直線上にあるので、y ＝ ${yP} を代入\n${M(`${yP} ＝ ${ax(a)} ${sgn(b)}`)}`,`x について解く\n${M(`${ax(a)} ＝ ${num(yP-b)}`)}　→　${M(`x ＝ ${t}`)}`],
+      point:"x 軸上の辺を底辺にすると、高さは点の y 座標",
+      fig:{lines:[{m:a,k:b}],pts:[{x:p,y:0,label:`A(${p}, 0)`,pos:"se"}]},
+      solFig:{lines:[{m:a,k:b}],polys:[{pts:[[0,0],[p,0],[t,yP]]}],dashes:[[[t,yP],[t,0]]],
+        pts:[{x:p,y:0,label:`A(${p}, 0)`,pos:"se"},{x:t,y:yP,label:`P${xy(t,yP)}`,pos:"ne",hot:true}],marks:[{x:t+0.9,y:yP/2,text:`高さ ${yP}`}]}}; },
+});
+ORDER.push(...CHAL);
+
+/* ===== 座標平面の図 =====
+   spec: lines[{m,k,label}], pts[{x,y,label,pos}], polys[{pts,tone}], dashes[[[x1,y1],[x2,y2]]], marks[{x,y,text}] */
+function figSVG(spec,grid=true){
+  const P=[[0,0]]; (spec.pts||[]).forEach(q=>P.push([q.x,q.y])); (spec.polys||[]).forEach(g=>g.pts.forEach(q=>P.push(q))); (spec.dashes||[]).forEach(d=>d.forEach(q=>P.push(q)));
+  let x0=Math.min(...P.map(q=>q[0])), x1=Math.max(...P.map(q=>q[0])), y0=Math.min(...P.map(q=>q[1])), y1=Math.max(...P.map(q=>q[1]));
+  const span=Math.max(x1-x0,y1-y0,6)+3, cx=(x0+x1)/2, cy=(y0+y1)/2;
+  x0=Math.floor(cx-span/2); x1=x0+Math.ceil(span); y0=Math.floor(cy-span/2); y1=y0+Math.ceil(span);
+  const W=320, pad=14, sc=(W-2*pad)/(x1-x0);
+  const X=x=>pad+(x-x0)*sc, Y=y=>pad+(y1-y)*sc;
+  const step=(x1-x0)>16?2:1;
+  const esc=t=>String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  let g="";
+  if(grid) for(let x=Math.ceil(x0/step)*step;x<=x1;x+=step) g+=`<line x1="${X(x)}" y1="${Y(y0)}" x2="${X(x)}" y2="${Y(y1)}" stroke="#eceef2" stroke-width="1"/>`;
+  if(grid) for(let y=Math.ceil(y0/step)*step;y<=y1;y+=step) g+=`<line x1="${X(x0)}" y1="${Y(y)}" x2="${X(x1)}" y2="${Y(y)}" stroke="#eceef2" stroke-width="1"/>`;
+  const tone={a:"rgba(240,106,30,.22)",b:"rgba(36,71,166,.18)",c:"rgba(31,122,85,.18)"};
+  (spec.polys||[]).forEach(pg=>{ g+=`<polygon points="${pg.pts.map(q=>`${X(q[0])},${Y(q[1])}`).join(" ")}" fill="${tone[pg.tone||"a"]}" stroke="none"/>`; });
+  // 軸
+  if(y0<0&&y1>0) g+=`<line x1="${X(x0)}" y1="${Y(0)}" x2="${X(x1)}" y2="${Y(0)}" stroke="#14181f" stroke-width="1.3" marker-end="url(#ar)"/><text x="${X(x1)-6}" y="${Y(0)-6}" font-size="13" font-style="italic" fill="#14181f">x</text>`;
+  if(x0<0&&x1>0) g+=`<line x1="${X(0)}" y1="${Y(y0)}" x2="${X(0)}" y2="${Y(y1)}" stroke="#14181f" stroke-width="1.3" marker-end="url(#ar)"/><text x="${X(0)+6}" y="${Y(y1)+12}" font-size="13" font-style="italic" fill="#14181f">y</text>`;
+  g+=`<text x="${X(0)-12}" y="${Y(0)+14}" font-size="12" fill="#14181f">O</text>`;
+  // 直線（枠で切る）
+  const cols=["#2447a6","#1f7a55","#f06a1e"];
+  (spec.lines||[]).forEach((ln,i)=>{ let a=[x0,ln.m*x0+ln.k], b=[x1,ln.m*x1+ln.k];
+    const clip=(q,o)=>{ if(q[1]>y1) return [(y1-ln.k)/ln.m,y1]; if(q[1]<y0) return [(y0-ln.k)/ln.m,y0]; return q; };
+    if(ln.m!==0){ a=clip(a); b=clip(b); }
+    const c=ln.color||cols[i%3];
+    g+=`<line x1="${X(a[0])}" y1="${Y(a[1])}" x2="${X(b[0])}" y2="${Y(b[1])}" stroke="${c}" stroke-width="2"/>`;
+    if(ln.label){ const lx=b[0]-(x1-x0)*0.04, ly=ln.m*lx+ln.k; g+=`<text x="${X(Math.min(lx,x1-0.5))-4}" y="${Y(Math.max(Math.min(ly,y1-0.5),y0+0.8))-6}" font-size="12" text-anchor="end" fill="${c}" font-weight="700">${esc(ln.label)}</text>`; }
+  });
+  (spec.dashes||[]).forEach(d=>{ g+=`<line x1="${X(d[0][0])}" y1="${Y(d[0][1])}" x2="${X(d[1][0])}" y2="${Y(d[1][1])}" stroke="#14181f" stroke-width="1.3" stroke-dasharray="4 3"/>`; });
+  (spec.marks||[]).forEach(m=>{ g+=`<text x="${X(m.x)}" y="${Y(m.y)}" font-size="12" text-anchor="middle" fill="#b7700a" font-weight="700">${esc(m.text)}</text>`; });
+  const off={ne:[6,-6,"start"],nw:[-6,-6,"end"],se:[6,15,"start"],sw:[-6,15,"end"],n:[0,-8,"middle"],s:[0,17,"middle"]};
+  (spec.pts||[]).forEach(q=>{ const [dx,dy,an]=off[q.pos||"ne"]; g+=`<circle cx="${X(q.x)}" cy="${Y(q.y)}" r="3.4" fill="${q.hot?"#f06a1e":"#14181f"}"/>`;
+    if(q.label) g+=`<text x="${X(q.x)+dx}" y="${Y(q.y)+dy}" font-size="12.5" text-anchor="${an}" fill="#14181f" font-weight="600" paint-order="stroke" stroke="#fff" stroke-width="3">${esc(q.label)}</text>`; });
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${W}" role="img" aria-label="座標平面の図"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#14181f"/></marker></defs><rect width="${W}" height="${W}" fill="#fff"/>${g}</svg>`;
+  const wrap=document.createElement("div"); wrap.className="fig"; wrap.innerHTML=svg; return wrap;
+}
+const xy=(x,y)=>`(${num(x)}, ${num(y)})`;
+
+/* ===== 状態 ===== */
+const KEY="akatsuki-ichiji-v3";
+let S=null;
+function fresh(){ return {name:"",phase:"start",st:Object.fromEntries(ORDER.map(k=>[k,"none"])),diagIdx:0,queue:[],cur:null,checkFor:null,streak:0,wrongs:0,done:[],startedAt:Date.now()}; }
+function save(){ if(S&&S.kind==="rv") return; try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+function load(){ try{ const v=JSON.parse(localStorage.getItem(KEY)||"null"); if(v&&v.st) return v; }catch(e){} return null; }
+
+/* ===== 毎日の復習：忘れかけたころにもう一度 =====
+   ポイントごとに「箱」を持ち、ヒントなしで正解すると次の箱へ（間隔が伸びる）。
+   まちがえたら箱0（翌日）に戻る。記録はこのスマホの中だけ。 */
+const RKEY="akatsuki-review-v1";
+const INT=[1,3,7,14,30,60];   /* 箱ごとの間隔（日） */
+const DAILY=10;               /* 1日の上限 */
+const HB_SEC=12*60;           /* 本番モードの制限時間 */
+const ymd=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const addD=n=>{ const t=new Date(); return ymd(new Date(t.getFullYear(),t.getMonth(),t.getDate()+n)); };
+const mdj=s=>{ const p=s.split("-"); return `${+p[1]}/${+p[2]}`; };
+function loadR(){ try{ const v=JSON.parse(localStorage.getItem(RKEY)||"null"); if(v&&v.items) return {items:v.items,days:v.days||{},honban:v.honban||[]}; }catch(e){} return {items:{},days:{},honban:[]}; }
+function saveR(){ try{ localStorage.setItem(RKEY,JSON.stringify(RV)); }catch(e){} }
+let RV=loadR();
+function dueList(){ const t=ymd(); return Object.entries(RV.items).filter(([k,it])=>GEN[k]&&it.due<=t).sort((a,b)=>a[1].due.localeCompare(b[1].due)||a[1].box-b[1].box).map(([k])=>k); }
+function nextDue(){ return Object.values(RV.items).map(it=>it.due).sort()[0]||null; }
+function addFromDiag(st){
+  for(const k of ORDER){ const s=st[k]; if(!s||s==="none") continue;
+    if(s==="weak"||s==="ask") RV.items[k]={box:0,due:addD(1),src:"diag"};
+    else if(!RV.items[k]) RV.items[k]=s==="ok"?{box:1,due:addD(3),src:"diag"}:{box:0,due:addD(1),src:"diag"}; }
+  saveR();
+}
+function logDay(correct){ const t=ymd(); const d=RV.days[t]||{n:0,ok:0}; d.n++; if(correct) d.ok++; RV.days[t]=d;
+  const ks=Object.keys(RV.days).sort(); while(ks.length>90) delete RV.days[ks.shift()]; }
+function rate(k,correct,hinted){
+  const it=RV.items[k]||{box:0,src:"diag"}; let box=it.box, due;
+  if(!correct){ box=0; due=1; }
+  else if(hinted){ due=Math.max(1,INT[Math.max(box-1,0)]); }        /* ヒントを使ったら箱はそのまま */
+  else { box=Math.min(box+1,INT.length-1); due=INT[box]; }
+  RV.items[k]={...it,box,due:addD(due)}; logDay(correct); saveR();
+}
+function streakDays(){ let n=0; const t=new Date(); let i=(RV.days[ymd()]||{}).n?0:1;
+  while((RV.days[ymd(new Date(t.getFullYear(),t.getMonth(),t.getDate()-i))]||{}).n){ n++; i++; } return n; }
+function week(){ let s=0; for(let i=0;i<7;i++) s+=(RV.days[addD(-i)]||{}).n||0; return s; }
+
+/* 塾のコード（先生の画面のQR、または6文字）：J＋17ポイントの印（4文字）＋確認1文字 */
+const B32="23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+function jukuDecode(raw){
+  const c=String(raw||"").toUpperCase().replace(/[Ａ-Ｚａ-ｚ０-９]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0xFEE0)).toUpperCase().replace(/[^0-9A-Z]/g,"");
+  if(c.length!==6) return {err:"コードは6文字です（例：JK7-QM3）。"};
+  if(c[0]!=="J") return {err:"この単元のコードは、まだ使えません。"};
+  if([...c].some(ch=>B32.indexOf(ch)<0)) return {err:"使えない文字が入っています。写しまちがいがないか確かめてください。"};
+  let sum=0; for(const ch of c.slice(0,5)) sum=(sum*7+B32.indexOf(ch)+1)%32;
+  if(B32[sum]!==c[5]) return {err:"コードが合いません。写しまちがいがないか確かめてください。"};
+  let mask=0; for(const ch of c.slice(1,5)) mask=mask*32+B32.indexOf(ch);
+  const nodes=ORDER.filter((k,i)=>mask&(1<<i));
+  if(!nodes.length) return {err:"このコードには問題が入っていません。"};
+  return {nodes};
+}
+function jukuAdd(raw){
+  const r=jukuDecode(raw); if(r.err) return r;
+  for(const k of r.nodes) RV.items[k]={...(RV.items[k]||{}),box:0,due:ymd(),src:"juku"};
+  saveR();
+  return {msg:`塾から${r.nodes.length}個のポイントを復習に入れました。今日の復習に出ます。`,nodes:r.nodes};
+}
+let flash=null;
+function toMenu(){ clearInterval(hbTimer); S=fresh(); S.phase="menu"; render(); window.scrollTo(0,0); }
+
+/* 復習の流れ */
+function startReview(){ const list=dueList().slice(0,DAILY); if(!list.length) return; S={kind:"rv",phase:"review",rv:{list,idx:0,ok:0},cur:null}; nextReview(); window.scrollTo(0,0); }
+function nextReview(){
+  const rv=S.rv; if(rv.idx>=rv.list.length){ S.phase="reviewEnd"; S.cur=null; return render(); }
+  const node=rv.list[rv.idx]; S.cur={node,prob:GEN[node](),tries:0,hintN:0,mode:"review"}; render();
+}
+function renderReviewEnd(){
+  setProg("復習おわり",1);
+  const rv=S.rv, nd=nextDue(), sk=streakDays();
+  app.append(h("section",{class:"card pop"},
+    h("div",{class:"eyebrow"},"今日の復習"),
+    h("h1",{},`${rv.list.length}問中 ${rv.ok}問 正解`),
+    sk?h("p",{},h("span",{class:"streak"},`${sk}日連続`)):null,
+    h("p",{class:"muted"},"まちがえたところは、明日もう一度出ます。正解したところは、次に出るまでの間が少しずつ長くなります。"),
+    nd?h("p",{class:"muted"},`次の復習：${mdj(nd)}`):null,
+    dueList().length?h("button",{class:"btn wide",type:"button",onclick:startReview},"続けてもう少しやる"):null,
+    h("button",{class:"btn sub wide",type:"button",onclick:toMenu},"一覧へ")));
+}
+
+/* 本番モード：ヒントなし・1回だけ・時間制限あり */
+let hbTimer=null;
+const hbLeft=()=>Math.max(0,HB_SEC-Math.floor((Date.now()-S.hb.start)/1000));
+function hbProg(){ const l=hbLeft(), hb=S.hb; setProg(`${Math.min(hb.idx+1,hb.list.length)}/${hb.list.length}　のこり ${Math.floor(l/60)}:${String(l%60).padStart(2,"0")}`,hb.idx/hb.list.length); }
+function startHonban(){
+  S={kind:"rv",phase:"honban",hb:{list:[...MAIN],idx:0,res:[],start:Date.now()},cur:null};
+  clearInterval(hbTimer); hbTimer=setInterval(()=>{ if(!S||S.phase!=="honban"){ clearInterval(hbTimer); return; } hbProg(); if(hbLeft()<=0) endHonban(); },1000);
+  nextHonban(); window.scrollTo(0,0);
+}
+function nextHonban(){
+  const hb=S.hb; if(hb.idx>=hb.list.length) return endHonban();
+  const node=hb.list[hb.idx]; S.cur={node,prob:GEN[node](),tries:0,hintN:0,mode:"honban"}; render();
+}
+function hbRecord(correct){ const hb=S.hb; hb.res.push({node:S.cur.node,prob:S.cur.prob,correct}); hb.idx++; nextHonban(); window.scrollTo(0,0); }
+function endHonban(){
+  clearInterval(hbTimer); const hb=S.hb; if(S.phase!=="honban") return;
+  for(let i=hb.res.length;i<hb.list.length;i++) hb.res.push({node:hb.list[i],prob:null,correct:false,skipped:true});
+  const ok=hb.res.filter(r=>r.correct).length, sec=Math.min(HB_SEC,Math.round((Date.now()-hb.start)/1000));
+  RV.honban.unshift({at:Date.now(),n:hb.list.length,ok,sec}); RV.honban=RV.honban.slice(0,20);
+  for(const r of hb.res) if(!r.correct) RV.items[r.node]={...(RV.items[r.node]||{}),box:0,due:addD(1),src:"honban"};
+  saveR(); hb.ok=ok; hb.sec=sec; S.phase="honbanResult"; S.cur=null; render(); window.scrollTo(0,0);
+}
+function renderHonbanResult(){
+  const hb=S.hb; setProg("本番おわり",1);
+  const prev=RV.honban[1];
+  app.append(h("section",{class:"card pop"},
+    h("div",{class:"eyebrow"},"本番モードの結果"),
+    h("h1",{},`${hb.list.length}問中 ${hb.ok}問 正解`),
+    h("p",{class:"muted"},`かかった時間 ${Math.floor(hb.sec/60)}分${hb.sec%60}秒${prev?`　／　前回 ${prev.ok}/${prev.n}問`:""}`),
+    h("p",{},hb.ok===hb.list.length?"ヒントなしで全部解けました。テスト本番も大丈夫です。":"×の問題は、明日の復習に入れました。解き方を見て、どこでつまずいたか確かめよう。"),
+    h("div",{style:"display:grid;gap:6px"},hb.res.map(r=>h("div",{class:"hbrow"},
+      h("span",{class:"mk "+(r.correct?"s-ok":"s-weak")},r.correct?"○":"×"),
+      h("span",{},NODES[r.node].name,r.skipped?h("span",{class:"muted"},"（時間切れ）"):null),
+      !r.correct&&r.prob?h("details",{},h("summary",{},"問題と解き方"),h("div",{class:"q"},rich(r.prob.q)),r.prob.fig?figSVG(r.prob.fig,false):null,solution(r.prob)):null))),
+    h("button",{class:"btn sub wide",type:"button",onclick:toMenu},"一覧へ")));
+}
+
+/* 結果コードの画面（いつでも出せる） */
+function renderCodeScreen(){
+  setProg("",0);
+  const D=load()||fresh(), hb=RV.honban[0], d=new Date();
+  app.append(h("section",{class:"card pop"},
+    h("button",{class:"btn sub",type:"button",style:"justify-self:start",onclick:toMenu},"← 一覧へ"),
+    h("div",{class:"result-head"},h("div",{class:"t"},"一次関数 結果コード"),h("div",{class:"d"},`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`)),
+    D.name?h("h2",{},D.name+" さん"):null,
+    h("div",{class:"stats"},
+      h("div",{},h("span",{},"復習 連続"),h("b",{},`${streakDays()}日`)),
+      h("div",{},h("span",{},"この7日間"),h("b",{},`${week()}問`)),
+      h("div",{},h("span",{},"本番モード"),h("b",{},hb?`${hb.ok}/${hb.n}`:"−"))),
+    nodeMap(ORDER,D.st), legend(),
+    h("div",{class:"code"},resultCode(D.st)),
+    h("p",{class:"muted"},"この画面をスクショして、塾で先生に見せてください。")));
+}
+
+/* ===== 単元一覧（新しい単元はここに足す） ===== */
+const UNITS=[
+  {id:"ichiji",grade:"中2",name:"一次関数",desc:"8問の診断 → つまずいたところだけ練習。発展・難関のチャレンジ問題つき",ready:true},
+  {id:"renritsu",grade:"中2",name:"連立方程式",desc:"準備中",ready:false},
+  {id:"kakuritsu",grade:"中2",name:"確率",desc:"準備中",ready:false},
+];
+/* ===== 画面 ===== */
+const app=document.getElementById("app");
+function h(tag,attrs={},...kids){ const el=document.createElement(tag); for(const[k,v]of Object.entries(attrs)){ if(k==="class") el.className=v; else if(k.startsWith("on")) el.addEventListener(k.slice(2),v); else if(v!==false&&v!=null) el.setAttribute(k,v);} for(const c of kids.flat()) if(c!=null) el.append(c instanceof Node?c:String(c)); return el; }
+function rich(text){ /* ⟦…⟧ を等幅の数式に */ const out=h("span"); String(text).split(/(⟦[^⟧]*⟧)/).forEach(part=>{ if(part.startsWith("⟦")) out.append(h("span",{class:"m"},part.slice(1,-1))); else out.append(part); }); return out; }
+function setProg(text,ratio){ document.getElementById("prog").textContent=text||""; document.getElementById("barFill").style.width=Math.round((ratio||0)*100)+"%"; }
+
+function render(){
+  app.replaceChildren();
+  const SUB={menu:"演習",review:"今日の復習",reviewEnd:"今日の復習",honban:"本番モード",honbanResult:"本番モード",code:"結果コード"};
+  document.getElementById("brandSub").textContent=SUB[S.phase]||"一次関数 つまずき診断";
+  if(S.phase==="menu") return renderMenu();
+  if(S.phase==="review"||S.phase==="honban") return renderProblem();
+  if(S.phase==="reviewEnd") return renderReviewEnd();
+  if(S.phase==="honbanResult") return renderHonbanResult();
+  if(S.phase==="code") return renderCodeScreen();
+  if(S.phase==="start") return renderStart();
+  if(S.phase==="diag") return renderProblem("diag");
+  if(S.phase==="diagResult") return renderDiagResult();
+  if(S.phase==="learn") return renderProblem("learn");
+  if(S.phase==="end") return renderEnd();
+}
+
+function renderMenu(){
+  setProg("",0);
+  const saved=load();
+  if(flash){ app.append(h("div",{class:"flash pop "+(flash.ok?"ok":"ng"),role:"status"},flash.text)); flash=null; }
+  // 今日の復習
+  const due=dueList(), n=Math.min(due.length,DAILY), total=Object.keys(RV.items).length, sk=streakDays(), nd=nextDue();
+  app.append(h("section",{class:"card today pop"},
+    h("div",{class:"row",style:"justify-content:space-between"},h("div",{class:"eyebrow"},"毎日の復習"),sk?h("span",{class:"streak"},`${sk}日連続`):null),
+    total===0?[h("h1",{},"今日の復習"),h("p",{class:"muted"},"下の単元で診断をすると、忘れかけたころに、ここへ復習の問題が出てきます。")]
+    :n?[h("h1",{},`今日の復習　${n}問`),h("p",{class:"muted"},`約${Math.max(3,Math.round(n*1.5))}分。忘れかけているところから出します。`),h("button",{class:"btn wide",type:"button",onclick:startReview},"復習をはじめる")]
+    :[h("h1",{},"今日の復習はおわり"),h("p",{class:"muted"},nd?`次の復習は ${mdj(nd)} です。`:"")]));
+  app.append(h("div",{class:"eyebrow",style:"margin-top:6px"},"単元を選ぶ"));
+  for(const u of UNITS){
+    app.append(h("button",{class:"card unit"+(u.ready?"":" off"),type:"button",disabled:!u.ready,onclick:()=>{ if(!u.ready) return; S.phase="start"; render(); window.scrollTo(0,0); }},
+      h("div",{class:"row",style:"justify-content:space-between"},h("span",{class:"node"},u.grade),saved&&u.id==="ichiji"&&saved.phase!=="start"&&saved.phase!=="end"?h("span",{class:"muted"},"続きあり"):null),
+      h("h2",{},u.name),h("p",{class:"muted"},u.desc)));
+  }
+  // 本番モード
+  const last=RV.honban[0];
+  app.append(h("section",{class:"card"},
+    h("div",{class:"eyebrow"},"本番モード"),
+    h("h2",{},"ヒントなしで、一人で解けるか確かめる"),
+    h("p",{class:"muted"},`一次関数 ${MAIN.length}問・制限時間${HB_SEC/60}分・やり直しなし。まちがえた問題は明日の復習に入ります。`),
+    last?h("p",{class:"muted"},`前回：${last.ok}/${last.n}問（${mdj(ymd(new Date(last.at)))}）`):null,
+    h("button",{class:"btn chal wide",type:"button",onclick:startHonban},"本番モードをはじめる")));
+  // 塾のコード
+  const ci=h("input",{type:"text",class:"name",placeholder:"例：JK7-QM3",maxlength:"12",autocomplete:"off",autocapitalize:"characters",spellcheck:"false","aria-label":"塾のコード"});
+  const msg=h("p",{class:"muted",role:"status"});
+  const add=()=>{ const r=jukuAdd(ci.value); if(r.err){ msg.textContent=r.err; msg.style.color="var(--red)"; return; } flash={ok:true,text:r.msg}; render(); window.scrollTo(0,0); };
+  ci.addEventListener("keydown",e=>{ if(e.key==="Enter") add(); });
+  app.append(h("section",{class:"card"},
+    h("div",{class:"eyebrow"},"塾から"),
+    h("h2",{},"塾でまちがえた問題を入れる"),
+    h("p",{class:"muted"},"先生の画面に出たQRコードを、スマホのカメラで読み取ってください。読み取れないときは、画面のコードをここに入れます。"),
+    h("div",{class:"codein"},ci,h("button",{class:"btn",type:"button",onclick:add},"入れる")),msg));
+  // 結果コード
+  app.append(h("section",{class:"card"},
+    h("div",{class:"eyebrow"},"塾で見せる"),
+    h("h2",{},"結果コード"),
+    h("p",{class:"muted"},"診断・毎日の復習・本番モードの結果が、まとめて1つのコードに入ります。"),
+    h("button",{class:"btn sub wide",type:"button",onclick:()=>{ S={kind:"rv",phase:"code"}; render(); window.scrollTo(0,0); }},"結果コードを出す")));
+}
+function renderStart(){
+  setProg("",0);
+  const saved=load();
+  const nm=h("input",{type:"text",class:"name",id:"nm",placeholder:"名前（例：やまだ）",maxlength:"16",autocomplete:"off"}); nm.value=S.name||"";
+  app.append(h("section",{class:"card pop"},
+    h("button",{class:"btn sub",type:"button",style:"justify-self:start",onclick:()=>{S.phase="menu";render();}},"← 単元を選び直す"),
+    h("div",{class:"eyebrow"},"中2 数学"),
+    h("h1",{},"一次関数のどこでつまずいているか、見つけよう"),
+    h("p",{},"まず8問の診断をします。まちがえたところは、その原因になっている前の内容までさかのぼって練習します。"),
+    h("p",{class:"muted"},"ヒントは3段階。答えは毎回ちがう数で出ます。最後に出る「結果」をスクショして塾で見せてください。"),
+    h("label",{class:"muted",for:"nm"},"名前"), nm,
+    h("button",{class:"btn wide",type:"button",onclick:()=>{ S=fresh(); S.name=nm.value.trim(); S.phase="diag"; nextDiag(); }},"診断をはじめる"),
+    saved&&saved.phase!=="start"&&saved.phase!=="end"?h("button",{class:"btn sub wide",type:"button",onclick:()=>{ S=saved; if(!S.cur){ S.phase==="diag"?nextDiag():nextLearn(); } else render(); }},"前回の続きから"):null
+  ));
+}
+
+/* 診断：一次関数の8ポイントを1問ずつ */
+function nextDiag(){
+  if(S.diagIdx>=MAIN.length){ S.phase="diagResult"; S.cur=null; save(); return render(); }
+  const node=MAIN[S.diagIdx]; S.cur={node,prob:GEN[node](),tries:0,hintN:0,mode:"diag"}; save(); render();
+}
+
+/* 学習：弱いポイントを、前提から順に */
+function startChallenge(){
+  S.queue=CHAL.filter(k=>S.st[k]==="none"||S.st[k]==="weak"); S.phase="learn"; S.done=[]; S.cur=null; nextLearn();
+}
+const chalBtn=()=>CHAL.some(k=>S.st[k]==="none")?h("button",{class:"btn chal wide",type:"button",onclick:startChallenge},"チャレンジ問題に進む（偏差値65〜73）"):null;
+function startLearn(){
+  S.queue=MAIN.filter(k=>S.st[k]==="weak"); S.phase="learn"; S.done=[]; nextLearn();
+}
+function nextLearn(){
+  // まだ確かめていない前提があれば、先に1問だけ確認
+  while(S.queue.length){
+    const node=S.queue[0];
+    const unchecked=(PRE[node]||[]).find(p=>S.st[p]==="none");
+    if(unchecked){ S.cur={node:unchecked,prob:GEN[unchecked](),tries:0,hintN:0,mode:"check",forNode:node}; save(); return render(); }
+    const weakPre=(PRE[node]||[]).find(p=>S.st[p]==="weak");
+    if(weakPre){ S.queue.unshift(weakPre); continue; }
+    S.streak=0; S.wrongs=0;
+    S.cur={node,prob:GEN[node](),tries:0,hintN:0,mode:"practice"}; save(); return render();
+  }
+  S.phase="end"; S.cur=null; save(); render();
+}
+
+function renderProblem(){
+  const c=S.cur, p=c.prob, nd=NODES[c.node];
+  if(c.mode==="diag") setProg(`診断 ${S.diagIdx+1}/${MAIN.length}`,S.diagIdx/MAIN.length);
+  else if(c.mode==="review") setProg(`復習 ${S.rv.idx+1}/${S.rv.list.length}`,S.rv.idx/S.rv.list.length);
+  else if(c.mode==="honban") hbProg();
+  else { const total=Math.max(1,S.done.length+S.queue.length); setProg(`練習 のこり${S.queue.length}ポイント`,S.done.length/total); }
+  const card=h("section",{class:"card pop"});
+  const label=c.mode==="review"?"今日の復習":c.mode==="honban"?`本番モード ${S.hb.idx+1}/${S.hb.list.length}（ヒントなし）`:c.mode==="diag"?"診断":c.node[0]==="A"&&c.mode==="practice"?`チャレンジ${S.streak?`　連続正解 ${S.streak}/2`:""}`:c.mode==="check"?`さかのぼり確認：${NODES[c.forNode].name}の前に`:`練習${S.streak?`　連続正解 ${S.streak}/2`:""}`;
+  card.append(h("div",{class:"eyebrow"},label), h("div",{class:"node"+(c.node[0]==="P"?" back":c.node[0]==="A"?" chal":"")},(c.node[0]==="A"?nd.grp.replace(/（.*/,"")+"｜":"")+nd.name));
+  card.append(h("div",{class:"q"},rich(p.q)));
+  if(p.fig) card.append(figSVG(p.fig,false));
+  // 入力欄
+  const inputs=p.fields.map((f,i)=>{ const inp=h("input",{type:"text",inputmode:"decimal",autocomplete:"off",id:`f${i}`,"aria-label":f.pre||`答え${i+1}`}); inp.addEventListener("keydown",e=>{ if(e.key==="Enter") check(); }); return inp; });
+  const ans=h("div",{class:"ans"});
+  p.fields.forEach((f,i)=>{ if(f.pre) ans.append(h("span",{},f.pre)); ans.append(inputs[i]); if(f.post) ans.append(h("span",{},f.post)); });
+  card.append(ans);
+  if(p.line) card.append(h("p",{class:"muted"},"切片がマイナスのときは、2つ目の欄に −3 のように入れます。"));
+  let focused=inputs[0];
+  inputs.forEach(i=>i.addEventListener("focus",()=>focused=i));
+  card.append(h("div",{class:"keys"},
+    h("button",{type:"button","aria-label":"マイナスをつける・外す",onclick:()=>{ const v=focused.value; focused.value=v.startsWith("-")||v.startsWith("−")?v.slice(1):"-"+v; focused.focus(); }},"−"),
+    h("button",{type:"button","aria-label":"分数の線",onclick:()=>{ focused.value+="/"; focused.focus(); }},"／"),
+    h("button",{type:"button","aria-label":"消す",onclick:()=>{ focused.value=""; focused.focus(); }},"消す")));
+  // ヒント
+  const hintArea=h("div",{class:"hints"});
+  const drawHints=()=>{ hintArea.replaceChildren(...p.hints.slice(0,c.hintN).map((t,i)=>h("div",{class:"hintbox"},h("b",{},`ヒント${i+1}`),rich(t)))); };
+  drawHints();
+  const fb=h("div");
+  const btnCheck=h("button",{class:"btn",type:"button",onclick:()=>check()},"答え合わせ");
+  const btnHint=h("button",{class:"btn hint",type:"button",onclick:()=>{ if(c.hintN<3){ c.hintN++; drawHints(); save(); btnHint.textContent=c.hintN<3?`ヒント${c.hintN+1}を見る`:"ヒントは3つまで"; btnHint.disabled=c.hintN>=3; } }},c.hintN<3?`ヒント${c.hintN+1}を見る`:"ヒントは3つまで");
+  btnHint.disabled=c.hintN>=3;
+  const test=c.mode==="diag"||c.mode==="check"||c.mode==="honban";
+  const btnGive=h("button",{class:"btn sub",type:"button",onclick:()=>c.mode==="honban"?hbRecord(false):finish(false,true)},c.mode==="honban"?"わからない（次へ）":test?"わからない":"答えを見る");
+  if(test) card.append(h("div",{class:"row"},btnCheck,btnGive));
+  else card.append(hintArea,h("div",{class:"row"},btnCheck,btnHint,btnGive));
+  card.append(fb);
+  if(c.mode==="review") card.append(h("button",{class:"btn sub",type:"button",style:"justify-self:start",onclick:toMenu},"きょうはここまで（一覧へ）"));
+  if(c.mode==="honban") card.append(h("button",{class:"btn sub",type:"button",style:"justify-self:start",onclick:endHonban},"ここで終わって採点する"));
+  app.append(card);
+  setTimeout(()=>inputs[0].focus({preventScroll:true}),50);
+
+  function check(){
+    const vals=inputs.map(i=>parseAns(i.value));
+    if(vals.some(v=>v===null)){ fb.className="fb ng"; fb.replaceChildren(h("b",{},"入力を確かめてね"),"数字で入れてください。分数は 3/4、マイナスは −3 のように。"); return; }
+    const okEach=p.fields.map((f,i)=>feq(vals[i],f.ans));
+    if(c.mode==="honban") return hbRecord(okEach.every(Boolean));   /* 本番は○×を見せずに次へ */
+    inputs.forEach((inp,i)=>{ inp.classList.toggle("ok",okEach[i]); inp.classList.toggle("bad",!okEach[i]); });
+    if(okEach.every(Boolean)) return finish(true,false);
+    c.tries++;
+    const mis=(p.mis||[]).find(m=>m.v.every((mv,i)=>mv===null||feq(mv,vals[i])));
+    if(c.mode==="diag"||c.mode==="check"||c.tries>=2) return finish(false,false,mis&&mis.t);
+    fb.className="fb ng"; fb.replaceChildren(h("b",{},"おしい、もう一度"), mis?mis.t:"ヒントを見てから、もう一度やってみよう。");
+    save();
+  }
+  function finish(correct,gaveUp,misText){
+    card.querySelectorAll("button,input").forEach(b=>b.disabled=true);
+    const next=h("button",{class:"btn wide",type:"button",onclick:()=>advance(correct)},"次へ");
+    if(correct){ fb.className="fb ok"; fb.replaceChildren(h("b",{},"正解！")); }
+    else { fb.className="fb ng"; fb.replaceChildren(h("b",{},gaveUp?"解き方を見てみよう":"ざんねん"), misText||"下の解き方を、1行ずつ確かめよう。"); }
+    card.append(solution(p));
+    card.append(next); next.disabled=false; next.focus({preventScroll:true});
+    c.result={correct,usedAll:c.hintN>=3}; save();
+  }
+}
+
+/* 解き方：番号つきの手順と、いちばん大事なこと */
+function solution(p){
+  return h("div",{class:"sol"},
+    h("div",{class:"sol-h"},"解き方"),
+    p.solFig?figSVG(p.solFig):null,
+    h("ol",{},p.steps.map(t=>{ const [head,...rest]=String(t).split("\n"); return h("li",{},h("div",{class:"st-h"},rich(head)),...rest.map(r=>h("div",{class:"st-m"},rich(r)))); })),
+    h("div",{class:"point"},h("b",{},"ポイント"),rich(p.point)));
+}
+function advance(correct){
+  const c=S.cur;
+  if(c.mode==="review"){ rate(c.node,correct,c.hintN>0); S.rv.idx++; if(correct) S.rv.ok++; window.scrollTo(0,0); return nextReview(); }
+  if(c.mode==="diag"){ S.st[c.node]=correct?"ok":"weak"; S.diagIdx++; return nextDiag(); }
+  if(c.mode==="check"){ S.st[c.node]=correct?"ok":"weak"; return nextLearn(); }
+  // 練習：ヒント3つを全部使った正解は「連続正解」に数えない
+  if(correct&&!c.result.usedAll){ S.streak++; } else { S.streak=0; if(!correct) S.wrongs++; }
+  const node=c.node;
+  const finishNode=status=>{ S.st[node]=status; S.queue.shift(); S.done.push(node); nextLearn(); };
+  if(S.streak>=2) return finishNode("up");
+  if(S.wrongs>=3) return finishNode("ask");
+  S.cur={node,prob:GEN[node](),tries:0,hintN:0,mode:"practice"}; save(); render();
+}
+
+const MARK={ok:["○","s-ok","できた"],up:["◎","s-up","練習でできるようになった"],weak:["×","s-weak","まだ"],ask:["△","s-ask","先生に質問しよう"],none:["−","s-none","未確認"]};
+function nodeMap(keys,st=S.st){
+  const box=h("div",{class:"map"}); let g="";
+  keys.forEach(k=>{ if(NODES[k].grp!==g){ g=NODES[k].grp; box.append(h("div",{class:"g"},g)); }
+    const [m,cls,lb]=MARK[st[k]||"none"]; box.append(h("div",{class:"it"},h("span",{class:"mk "+cls,"aria-label":lb},m),h("span",{},NODES[k].name))); });
+  return box;
+}
+function legend(){ return h("div",{class:"legend"},...Object.values(MARK).map(([m,,t])=>h("span",{},`${m} ${t}`))); }
+
+function renderDiagResult(){
+  setProg("診断おわり",1);
+  const weak=MAIN.filter(k=>S.st[k]==="weak");
+  app.append(h("section",{class:"card pop"},
+    h("div",{class:"eyebrow"},"診断の結果"),
+    h("h1",{},weak.length?`${MAIN.length-weak.length}/${MAIN.length}問 正解。×のところを練習しよう`:"全問正解！一次関数はばっちりです"),
+    nodeMap(MAIN),
+    weak.length?h("p",{class:"muted"},"練習では、まちがえた原因が前の内容にないかも確かめます。1つのポイントで2問続けて正解したらクリアです。"):null,
+    weak.length?h("button",{class:"btn wide",type:"button",onclick:startLearn},"練習をはじめる"):h("div",{style:"display:grid;gap:8px"},chalBtn(),h("button",{class:"btn sub wide",type:"button",onclick:()=>{S.phase="end";save();render();}},"結果を見る"))
+  ));
+}
+
+/* 結果コード IJ4：17ポイントの状態＋「復習の連続日数(2)・7日間の復習数(2)・本番の正解数(1)と問題数(1)」＋確認2けた */
+function resultCode(st=S.st){
+  const map={none:0,ok:1,up:2,weak:3,ask:4};
+  const digits=ORDER.map(k=>map[st[k]||"none"]).join("");
+  const hb=RV.honban[0], p2=n=>String(Math.min(99,n)).padStart(2,"0");
+  const ex=p2(streakDays())+p2(week())+(hb?`${Math.min(9,hb.ok)}${Math.min(9,hb.n)}`:"00");
+  let sum=0; for(const ch of digits+ex) sum=(sum*7+ +ch)%97;
+  return `IJ4-${digits.slice(0,5)}-${digits.slice(5,9)}-${digits.slice(9,13)}-${digits.slice(13)}-${ex}-${String(sum).padStart(2,"0")}`;
+}
+function renderEnd(){
+  setProg("おわり",1);
+  const sig=JSON.stringify(S.st); if(S.queued!==sig){ addFromDiag(S.st); S.queued=sig; save(); }
+  const d=new Date();
+  const asks=ORDER.filter(k=>S.st[k]==="ask"), ups=ORDER.filter(k=>S.st[k]==="up");
+  app.append(h("section",{class:"card pop"},
+    h("div",{class:"result-head"},h("div",{class:"t"},"一次関数 つまずき診断の結果"),h("div",{class:"d"},`${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`)),
+    h("h2",{},`${S.name?S.name+" さん":"おつかれさま"}`),
+    h("p",{},ups.length?`${ups.length}個のポイントが、練習でできるようになりました。`:"よくがんばりました。"),
+    asks.length?h("p",{class:"muted"},`△のポイントは、塾で先生に質問してください。`):null,
+    nodeMap(ORDER), legend(),
+    CHAL.some(k=>S.st[k]==="none")?h("p",{class:"muted"},"もっと難しい問題に挑戦したい人は、チャレンジ問題へ。入試の発展問題〜文理学科レベルです。"):null,
+    chalBtn(),
+    h("div",{class:"muted"},"結果コード（塾で先生に見せてね）"),
+    h("div",{class:"code"},resultCode()),
+    h("p",{class:"muted"},"この画面をスクショして、次の授業で先生に見せてください。"),
+    h("p",{class:"muted"},"ここで練習したところは、忘れかけたころに「毎日の復習」に出てきます。"),
+    h("button",{class:"btn sub wide",type:"button",onclick:()=>{ try{localStorage.removeItem(KEY);}catch(e){} S=fresh(); render(); window.scrollTo(0,0); }},"はじめからやり直す"),
+    h("button",{class:"btn sub wide",type:"button",onclick:()=>{ S.phase="menu"; render(); window.scrollTo(0,0); }},"単元の一覧へ")
+  ));
+}
+
+S=fresh(); S.phase="menu";
+(function(){ /* 先生の画面のQRから開いたとき（…#add=コード） */
+  const m=location.hash.match(/add=([0-9A-Za-z-]+)/); if(!m) return;
+  const r=jukuAdd(m[1]); flash=r.err?{ok:false,text:"塾のコードを読み取れませんでした。"+r.err}:{ok:true,text:r.msg};
+  try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
+})();
+render();
+</script>
+
+</body></html>
