@@ -106,6 +106,9 @@ button.card.unit.off{opacity:.5;cursor:default}
 .codein{display:flex;gap:8px}
 .codein .btn{flex:0 0 auto;white-space:nowrap}
 .codein input{flex:1 1 auto;min-width:0;font-family:var(--f-num);letter-spacing:.08em;text-transform:uppercase}
+button.tbtn{font:inherit;text-align:left;border:1px solid transparent;cursor:pointer;color:var(--ink)}
+button.tbtn .mk{font-family:var(--f-num);font-size:.78rem;color:var(--muted)}
+button.tbtn.on{border-color:var(--dawn);background:#fff1e8}
 .pop{animation:pop .25s ease}
 @keyframes pop{from{transform:scale(.97);opacity:.6}to{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.pop{animation:none}.bar i{transition:none}}
@@ -499,6 +502,33 @@ function renderCodeScreen(){
     h("p",{class:"muted"},"この画面をスクショして、塾で先生に見せてください。")));
 }
 
+/* ===== 先生用チェック（…/#sensei で開く。生徒の一覧には出ない） ===== */
+let tNode=null, tProb=null;
+function renderTeacher(){
+  setProg("",0);
+  const card=h("section",{class:"card pop"},
+    h("div",{class:"eyebrow"},"先生用チェック"),
+    h("h1",{},"問題・図・解き方を確かめる"),
+    h("p",{class:"muted"},"ポイントを選ぶと、生徒と同じしくみで問題を1つ作ります。「別の数で」を押すたびに数が変わります。記録には残りません。"));
+  const pick=h("div",{class:"map"}); let g="";
+  for(const k of ORDER){ if(NODES[k].grp!==g){ g=NODES[k].grp; pick.append(h("div",{class:"g"},g)); }
+    pick.append(h("button",{type:"button",class:"it tbtn"+(k===tNode?" on":""),onclick:()=>{ tNode=k; tProb=GEN[k](); render(); setTimeout(()=>document.getElementById("tview")?.scrollIntoView({block:"start"}),30); }},h("span",{class:"mk"},k),h("span",{},NODES[k].name))); }
+  card.append(pick); app.append(card);
+  if(tNode&&tProb){ const p=tProb, nd=NODES[tNode];
+    const ansTxt=p.fields.map(f=>`${f.pre||""} ${fa(f.ans)} ${f.post||""}`.trim()).join("　");
+    app.append(h("section",{class:"card pop",id:"tview"},
+      h("div",{class:"row",style:"justify-content:space-between"},h("div",{class:"node"+(tNode[0]==="P"?" back":tNode[0]==="A"?" chal":"")},`${tNode}｜${nd.name}`),
+        h("button",{class:"btn sub",type:"button",onclick:()=>{ tProb=GEN[tNode](); render(); setTimeout(()=>document.getElementById("tview")?.scrollIntoView({block:"start"}),30); }},"別の数で")),
+      h("div",{class:"sol-h"},"問題（生徒に見える図）"),
+      h("div",{class:"q"},rich(p.q)), p.fig?figSVG(p.fig,false):null,
+      h("div",{class:"fb ok"},h("b",{},"答え"),ansTxt.replace(/＋ (−)/,"$1")),
+      h("div",{class:"sol-h"},"ヒント（3段階）"),
+      h("div",{class:"hints"},p.hints.map((t,i)=>h("div",{class:"hintbox"},h("b",{},`ヒント${i+1}`),rich(t)))),
+      solution(p)));
+  }
+  app.append(h("button",{class:"btn sub wide",type:"button",onclick:()=>{ location.hash=""; toMenu(); }},"生徒用の一覧へ"));
+}
+
 /* ===== 単元一覧（新しい単元はここに足す） ===== */
 const UNITS=[
   {id:"ichiji",grade:"中2",name:"一次関数",desc:"8問の診断 → つまずいたところだけ練習。発展・難関のチャレンジ問題つき",ready:true},
@@ -513,13 +543,14 @@ function setProg(text,ratio){ document.getElementById("prog").textContent=text||
 
 function render(){
   app.replaceChildren();
-  const SUB={menu:"演習",review:"今日の復習",reviewEnd:"今日の復習",honban:"本番モード",honbanResult:"本番モード",code:"結果コード"};
+  const SUB={teacher:"先生用チェック",menu:"演習",review:"今日の復習",reviewEnd:"今日の復習",honban:"本番モード",honbanResult:"本番モード",code:"結果コード"};
   document.getElementById("brandSub").textContent=SUB[S.phase]||"一次関数 つまずき診断";
   if(S.phase==="menu") return renderMenu();
   if(S.phase==="review"||S.phase==="honban") return renderProblem();
   if(S.phase==="reviewEnd") return renderReviewEnd();
   if(S.phase==="honbanResult") return renderHonbanResult();
   if(S.phase==="code") return renderCodeScreen();
+  if(S.phase==="teacher") return renderTeacher();
   if(S.phase==="start") return renderStart();
   if(S.phase==="diag") return renderProblem("diag");
   if(S.phase==="diagResult") return renderDiagResult();
@@ -753,6 +784,7 @@ function renderEnd(){
 }
 
 S=fresh(); S.phase="menu";
+if(/sensei/.test(location.hash)) S={kind:"rv",phase:"teacher"};
 (function(){ /* 先生の画面のQRから開いたとき（…#add=コード） */
   const m=location.hash.match(/add=([0-9A-Za-z-]+)/); if(!m) return;
   const r=jukuAdd(m[1]); flash=r.err?{ok:false,text:"塾のコードを読み取れませんでした。"+r.err}:{ok:true,text:r.msg};
